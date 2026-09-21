@@ -18,8 +18,8 @@ export function DividendChart({
     <div className="h-56 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-          <XAxis dataKey="year" tick={{ fill: "#64748b", fontSize: 11 }} axisLine={{ stroke: "#334155" }} tickLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+          <XAxis dataKey="year" tick={{ fill: "#64748b", fontSize: 11 }} axisLine={{ stroke: "#cbd5e1" }} tickLine={false} />
           <YAxis
             tick={{ fill: "#64748b", fontSize: 11 }}
             axisLine={false}
@@ -28,11 +28,11 @@ export function DividendChart({
             tickFormatter={(v) => formatNaira(v, 0)}
           />
           <Tooltip
-            contentStyle={{ background: "#0f172a", border: "1px solid #334155", borderRadius: 8, fontSize: 12 }}
-            labelStyle={{ color: "#cbd5e1" }}
+            contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12 }}
+            labelStyle={{ color: "#475569" }}
             formatter={(value) => [formatNaira(Number(value)), "Dividend / share"]}
           />
-          <Bar dataKey="amount" fill="#c084fc" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="amount" fill="#15803d" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

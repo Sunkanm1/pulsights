@@ -70,13 +70,13 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
         {selectedCompanies.map((c) => (
           <span
             key={c.symbol}
-            className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3 py-1.5 text-sm text-slate-100"
+            className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 text-sm text-white"
           >
             {c.symbol}
             <button
               type="button"
               onClick={() => removeSymbol(c.symbol)}
-              className="text-slate-400 hover:text-rose-400"
+              className="text-slate-400 hover:text-red-400"
               aria-label={`Remove ${c.symbol}`}
             >
               ✕
@@ -87,7 +87,7 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
           <select
             value={pickerValue}
             onChange={(e) => addSymbol(e.target.value)}
-            className="rounded-md border border-slate-700 bg-slate-900 px-3 py-1.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
           >
             <option value="">+ Add company…</option>
             {available.map((c) => (
@@ -101,18 +101,18 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
       </div>
 
       {selectedCompanies.length < 2 ? (
-        <p className="rounded-xl border border-slate-800 bg-slate-900/40 p-6 text-center text-sm text-slate-500">
+        <p className="rounded-lg border border-slate-200 bg-white p-6 text-center text-sm text-slate-500 shadow-sm">
           Pick at least 2 companies to compare.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-800">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
           <table className="w-full min-w-[560px] text-sm">
             <thead>
-              <tr className="border-b border-slate-800 bg-slate-900/60 text-left text-xs uppercase tracking-wide text-slate-400">
+              <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                 <th className="px-3 py-2.5">Metric</th>
                 {selectedCompanies.map((c) => (
                   <th key={c.symbol} className="px-3 py-2.5 text-right">
-                    <Link href={`/stocks/${c.symbol}`} className="hover:text-emerald-400">
+                    <Link href={`/stocks/${c.symbol}`} className="hover:text-amber-700">
                       {c.symbol}
                     </Link>
                   </th>
@@ -121,15 +121,15 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.label} className="border-b border-slate-800/60 last:border-0">
-                  <td className="px-3 py-2.5 text-slate-400">{row.label}</td>
+                <tr key={row.label} className="border-b border-slate-100 last:border-0">
+                  <td className="px-3 py-2.5 text-slate-500">{row.label}</td>
                   {selectedCompanies.map((c) => {
                     const tone = row.tone?.(c) ?? "neutral";
                     return (
                       <td
                         key={c.symbol}
-                        className={`px-3 py-2.5 text-right font-medium ${
-                          tone === "positive" ? "text-emerald-400" : tone === "negative" ? "text-rose-400" : "text-slate-200"
+                        className={`px-3 py-2.5 text-right font-medium tabular-nums ${
+                          tone === "positive" ? "text-green-700" : tone === "negative" ? "text-red-700" : "text-slate-900"
                         }`}
                       >
                         {row.render(c)}

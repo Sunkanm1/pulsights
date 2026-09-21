@@ -17,7 +17,7 @@ export function WatchlistButton({ symbol, className = "" }: { symbol: string; cl
       aria-pressed={active}
       aria-label={active ? `Remove ${symbol} from watchlist` : `Add ${symbol} to watchlist`}
       className={`rounded-md p-1.5 text-lg leading-none transition ${
-        active ? "text-amber-400 hover:text-amber-300" : "text-slate-600 hover:text-slate-300"
+        active ? "text-amber-500 hover:text-amber-600" : "text-slate-300 hover:text-slate-500"
       } ${className}`}
     >
       {active ? "★" : "☆"}

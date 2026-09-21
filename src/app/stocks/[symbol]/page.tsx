@@ -31,16 +31,20 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-50 sm:text-3xl">{company.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">{company.name}</h1>
             <WatchlistButton symbol={company.symbol} className="text-2xl" />
           </div>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-500">
             {company.symbol} · {SECTOR_LABELS[company.sector] ?? company.sector}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-slate-50">{formatNaira(q?.price ?? null)}</p>
-          <p className={`text-sm font-medium ${changeTone === "positive" ? "text-emerald-400" : changeTone === "negative" ? "text-rose-400" : "text-slate-400"}`}>
+          <p className="text-2xl font-bold tabular-nums text-slate-900">{formatNaira(q?.price ?? null)}</p>
+          <p
+            className={`text-sm font-medium tabular-nums ${
+              changeTone === "positive" ? "text-green-700" : changeTone === "negative" ? "text-red-700" : "text-slate-500"
+            }`}
+          >
             {q ? `${q.change >= 0 ? "+" : ""}${q.change.toFixed(2)} (${formatPercent(q.changePercent)})` : "—"}
           </p>
         </div>
@@ -51,7 +55,7 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
       </div>
 
       <section className="mb-8">
-        <h2 className="mb-3 text-sm font-semibold text-slate-200">Key metrics {latest ? `(${latest.periodLabel})` : ""}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-slate-900">Key metrics {latest ? `(${latest.periodLabel})` : ""}</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard label="Revenue" value={formatCompactNaira(latest?.revenue ?? null)} />
           <StatCard label="Profit" value={formatCompactNaira(latest?.profit ?? null)} tone={(latest?.profit ?? 0) < 0 ? "negative" : "neutral"} />
@@ -72,25 +76,25 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
         </div>
       </section>
 
-      <section className="mb-8 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-        <h2 className="mb-1 text-sm font-semibold text-slate-200">Price history</h2>
+      <section className="mb-8 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-1 text-sm font-semibold text-slate-900">Price history</h2>
         <PriceChart points={company.priceHistory5Y} />
       </section>
 
       <div className="mb-8 grid gap-6 lg:grid-cols-2">
-        <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-          <h2 className="mb-1 text-sm font-semibold text-slate-200">Revenue &amp; profit trend</h2>
+        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-1 text-sm font-semibold text-slate-900">Revenue &amp; profit trend</h2>
           <RevenueProfitChart fundamentals={company.fundamentals} />
         </section>
-        <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-          <h2 className="mb-1 text-sm font-semibold text-slate-200">Dividend history</h2>
+        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-1 text-sm font-semibold text-slate-900">Dividend history</h2>
           <DividendChart dividends={company.dividendHistory} />
         </section>
       </div>
 
-      <section className="mb-8 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-        <h2 className="mb-2 text-sm font-semibold text-slate-200">About {company.name}</h2>
-        <p className="text-sm leading-relaxed text-slate-300">{company.description}</p>
+      <section className="mb-8 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-2 text-sm font-semibold text-slate-900">About {company.name}</h2>
+        <p className="text-sm leading-relaxed text-slate-600">{company.description}</p>
         <p className="mt-2 text-xs text-slate-500">
           Sector: {SECTOR_LABELS[company.sector] ?? company.sector} · Listed on NGX: {formatDate(company.listingDate)}
         </p>

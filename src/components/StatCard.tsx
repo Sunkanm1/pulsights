@@ -10,11 +10,11 @@ export function StatCard({
   tone?: "neutral" | "positive" | "negative";
 }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{label}</p>
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
       <p
-        className={`mt-1.5 text-xl font-semibold ${
-          tone === "positive" ? "text-emerald-400" : tone === "negative" ? "text-rose-400" : "text-slate-50"
+        className={`mt-1.5 text-xl font-semibold tabular-nums ${
+          tone === "positive" ? "text-green-700" : tone === "negative" ? "text-red-700" : "text-slate-900"
         }`}
       >
         {value}

@@ -73,12 +73,12 @@ export function StockTable({ companies, sectors }: { companies: CompanySummary[]
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name or ticker…"
-          className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none sm:max-w-xs"
+          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 sm:max-w-xs"
         />
         <select
           value={sector}
           onChange={(e) => setSector(e.target.value)}
-          className="w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none sm:w-auto"
+          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 sm:w-auto"
         >
           <option value="ALL">All sectors</option>
           {sectors.map((s) => (
@@ -90,20 +90,20 @@ export function StockTable({ companies, sectors }: { companies: CompanySummary[]
         <span className="text-sm text-slate-500">{filtered.length} companies</span>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-800">
+      <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
         <table className="w-full min-w-[1100px] text-sm">
           <thead>
-            <tr className="border-b border-slate-800 bg-slate-900/60 text-left text-xs uppercase tracking-wide text-slate-400">
-              <th className="sticky left-0 z-10 bg-slate-900/95 px-3 py-2.5">Company</th>
+            <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <th className="sticky left-0 z-10 bg-slate-50 px-3 py-2.5">Company</th>
               {columns.map((col) => (
                 <th key={col.key} className="px-3 py-2.5 text-right">
                   <button
                     type="button"
                     onClick={() => toggleSort(col.key)}
-                    className="inline-flex items-center gap-1 hover:text-slate-100"
+                    className="inline-flex items-center gap-1 hover:text-slate-900"
                   >
                     {col.label}
-                    {sortKey === col.key && <span>{sortDir === "asc" ? "▲" : "▼"}</span>}
+                    {sortKey === col.key && <span className="text-amber-700">{sortDir === "asc" ? "▲" : "▼"}</span>}
                   </button>
                 </th>
               ))}
@@ -111,37 +111,37 @@ export function StockTable({ companies, sectors }: { companies: CompanySummary[]
           </thead>
           <tbody>
             {filtered.map((c) => (
-              <tr key={c.symbol} className="border-b border-slate-800/60 last:border-0 hover:bg-slate-900/40">
-                <td className="sticky left-0 z-10 bg-slate-950/95 px-3 py-2.5">
+              <tr key={c.symbol} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+                <td className="sticky left-0 z-10 bg-white px-3 py-2.5">
                   <div className="flex items-center gap-1.5">
                     <WatchlistButton symbol={c.symbol} />
                     <Link href={`/stocks/${c.symbol}`} className="min-w-0">
-                      <p className="font-semibold text-slate-100">{c.symbol}</p>
+                      <p className="font-semibold text-slate-900">{c.symbol}</p>
                       <p className="truncate text-xs text-slate-500">{c.name}</p>
                     </Link>
                   </div>
                 </td>
-                <td className="px-3 py-2.5 text-right text-slate-200">{formatNaira(c.price)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatNaira(c.price)}</td>
                 <td
-                  className={`px-3 py-2.5 text-right font-medium ${
+                  className={`px-3 py-2.5 text-right font-medium tabular-nums ${
                     (c.changePercent ?? 0) > 0
-                      ? "text-emerald-400"
+                      ? "text-green-700"
                       : (c.changePercent ?? 0) < 0
-                        ? "text-rose-400"
-                        : "text-slate-400"
+                        ? "text-red-700"
+                        : "text-slate-500"
                   }`}
                 >
                   {formatPercent(c.changePercent)}
                 </td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatCompactNaira(c.marketCap)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatCompactNaira(c.revenue)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatCompactNaira(c.profit)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatCompactNaira(c.operatingCashFlow)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatCompactNaira(c.totalDebt)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatNaira(c.eps)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatPercent(c.dividendYield)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatPercent(c.roe)}</td>
-                <td className="px-3 py-2.5 text-right text-slate-300">{formatRatio(c.peRatio)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatCompactNaira(c.marketCap)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatCompactNaira(c.revenue)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatCompactNaira(c.profit)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatCompactNaira(c.operatingCashFlow)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatCompactNaira(c.totalDebt)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatNaira(c.eps)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatPercent(c.dividendYield)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatPercent(c.roe)}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums text-slate-700">{formatRatio(c.peRatio)}</td>
               </tr>
             ))}
             {filtered.length === 0 && (

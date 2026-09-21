@@ -11,8 +11,8 @@ export default async function StocksPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-50 sm:text-3xl">Stocks</h1>
-        <p className="mt-1 text-sm text-slate-400">Search, filter by sector, and sort by any metric.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Stocks</h1>
+        <p className="mt-1 text-sm text-slate-500">Search, filter by sector, and sort by any metric.</p>
         <div className="mt-3">
           <SourceBadge asOf={first?.asOf} source={first?.source} isPlaceholder={first?.isPlaceholder} />
         </div>

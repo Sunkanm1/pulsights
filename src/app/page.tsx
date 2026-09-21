@@ -38,8 +38,8 @@ export default async function MarketOverviewPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-50 sm:text-3xl">Market overview</h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Market overview</h1>
+        <p className="mt-1 text-sm text-slate-500">
           Snapshot of the {companies.length} NGX-listed companies Pulsights tracks.
         </p>
         <div className="mt-3">
@@ -47,8 +47,8 @@ export default async function MarketOverviewPage() {
         </div>
       </div>
 
-      <div className="mb-4 rounded-xl border border-slate-800 bg-slate-900/40 p-4 text-sm text-slate-400">
-        <strong className="text-slate-200">Pulsights Tracked-20 Composite</strong> — an equal-weighted average
+      <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-sm">
+        <strong className="text-slate-900">Pulsights Tracked-20 Composite</strong> — an equal-weighted average
         of the {companies.length} companies below, not the official NGX All-Share Index. NGX publishes the ASI
         across its full list of 150+ listed companies; we don&apos;t have a licensed feed for that figure yet, so
         we show this instead rather than imply we do.
@@ -67,26 +67,26 @@ export default async function MarketOverviewPage() {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-200">Top gainers</h2>
+        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-900">Top gainers</h2>
           <MoversTable rows={gainers} />
         </section>
-        <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-          <h2 className="mb-3 text-sm font-semibold text-slate-200">Top losers</h2>
+        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-900">Top losers</h2>
           <MoversTable rows={losers} />
         </section>
       </div>
 
-      <section className="mt-8 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
-        <h2 className="mb-3 text-sm font-semibold text-slate-200">Sector breakdown</h2>
-        <div className="space-y-2">
+      <section className="mt-8 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-3 text-sm font-semibold text-slate-900">Sector breakdown</h2>
+        <div className="space-y-2.5">
           {sectorBreakdown.map((s) => (
             <div key={s.sector} className="flex items-center gap-3 text-sm">
-              <span className="w-40 shrink-0 text-slate-300">{SECTOR_LABELS[s.sector] ?? s.sector}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-800">
-                <div className="h-full rounded-full bg-emerald-500" style={{ width: `${s.share}%` }} />
+              <span className="w-40 shrink-0 text-slate-600">{SECTOR_LABELS[s.sector] ?? s.sector}</span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                <div className="h-full rounded-full bg-slate-900" style={{ width: `${s.share}%` }} />
               </div>
-              <span className="w-14 shrink-0 text-right text-slate-400">{s.share.toFixed(1)}%</span>
+              <span className="w-14 shrink-0 text-right tabular-nums text-slate-500">{s.share.toFixed(1)}%</span>
             </div>
           ))}
         </div>
@@ -105,21 +105,21 @@ function MoversTable({
     <table className="w-full text-sm">
       <tbody>
         {rows.map((r) => (
-          <tr key={r.symbol} className="border-t border-slate-800 first:border-0">
+          <tr key={r.symbol} className="border-t border-slate-100 first:border-0">
             <td className="py-2">
-              <Link href={`/stocks/${r.symbol}`} className="font-medium text-slate-100 hover:text-emerald-400">
+              <Link href={`/stocks/${r.symbol}`} className="font-medium text-slate-900 hover:text-amber-700">
                 {r.symbol}
               </Link>
               <span className="ml-2 text-xs text-slate-500">{r.name}</span>
             </td>
-            <td className="py-2 text-right text-slate-300">₦{r.price?.toFixed(2) ?? "—"}</td>
+            <td className="py-2 text-right tabular-nums text-slate-700">₦{r.price?.toFixed(2) ?? "—"}</td>
             <td
-              className={`py-2 pl-4 text-right font-medium ${
+              className={`py-2 pl-4 text-right font-medium tabular-nums ${
                 (r.changePercent ?? 0) > 0
-                  ? "text-emerald-400"
+                  ? "text-green-700"
                   : (r.changePercent ?? 0) < 0
-                    ? "text-rose-400"
-                    : "text-slate-400"
+                    ? "text-red-700"
+                    : "text-slate-500"
               }`}
             >
               {formatPercent(r.changePercent)}

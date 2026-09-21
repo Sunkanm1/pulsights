@@ -48,7 +48,7 @@ export function PriceChart({ points }: { points: PricePoint[] }) {
             type="button"
             onClick={() => setRange(r)}
             className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
-              range === r ? "bg-emerald-500 text-slate-950" : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+              range === r ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
             {r}
@@ -63,16 +63,16 @@ export function PriceChart({ points }: { points: PricePoint[] }) {
             <AreaChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
               <defs>
                 <linearGradient id="priceFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={isUp ? "#34d399" : "#fb7185"} stopOpacity={0.35} />
-                  <stop offset="100%" stopColor={isUp ? "#34d399" : "#fb7185"} stopOpacity={0} />
+                  <stop offset="0%" stopColor={isUp ? "#15803d" : "#b91c1c"} stopOpacity={0.18} />
+                  <stop offset="100%" stopColor={isUp ? "#15803d" : "#b91c1c"} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
               <XAxis
                 dataKey="date"
                 tick={{ fill: "#64748b", fontSize: 11 }}
                 minTickGap={40}
-                axisLine={{ stroke: "#334155" }}
+                axisLine={{ stroke: "#cbd5e1" }}
                 tickLine={false}
               />
               <YAxis
@@ -84,14 +84,14 @@ export function PriceChart({ points }: { points: PricePoint[] }) {
                 tickFormatter={(v) => formatNaira(v, 0)}
               />
               <Tooltip
-                contentStyle={{ background: "#0f172a", border: "1px solid #334155", borderRadius: 8, fontSize: 12 }}
-                labelStyle={{ color: "#cbd5e1" }}
+                contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 8, fontSize: 12 }}
+                labelStyle={{ color: "#475569" }}
                 formatter={(value) => [formatNaira(Number(value)), "Close"]}
               />
               <Area
                 type="monotone"
                 dataKey="close"
-                stroke={isUp ? "#34d399" : "#fb7185"}
+                stroke={isUp ? "#15803d" : "#b91c1c"}
                 strokeWidth={2}
                 fill="url(#priceFill)"
               />
