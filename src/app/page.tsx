@@ -1,69 +1,132 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getCompanyList } from "@/lib/queries";
+import { SourceBadge } from "@/components/SourceBadge";
+import { StatCard } from "@/components/StatCard";
+import { formatCompactNaira, formatPercent, SECTOR_LABELS } from "@/lib/format";
 
-export default function Home() {
+export const revalidate = 0;
+
+export default async function MarketOverviewPage() {
+  const companies = await getCompanyList();
+  const withQuotes = companies.filter((c) => c.changePercent != null && c.price != null);
+
+  const avgChangePercent =
+    withQuotes.length > 0
+      ? withQuotes.reduce((sum, c) => sum + (c.changePercent ?? 0), 0) / withQuotes.length
+      : 0;
+  const totalMarketCap = companies.reduce((sum, c) => sum + (c.marketCap ?? 0), 0);
+  const advancing = withQuotes.filter((c) => (c.changePercent ?? 0) > 0).length;
+  const declining = withQuotes.filter((c) => (c.changePercent ?? 0) < 0).length;
+
+  const gainers = [...withQuotes].sort((a, b) => (b.changePercent ?? 0) - (a.changePercent ?? 0)).slice(0, 5);
+  const losers = [...withQuotes].sort((a, b) => (a.changePercent ?? 0) - (b.changePercent ?? 0)).slice(0, 5);
+
+  const bySector = new Map<string, number>();
+  for (const c of companies) {
+    bySector.set(c.sector, (bySector.get(c.sector) ?? 0) + (c.marketCap ?? 0));
+  }
+  const sectorBreakdown = [...bySector.entries()]
+    .map(([sector, marketCap]) => ({
+      sector,
+      marketCap,
+      share: totalMarketCap > 0 ? (marketCap / totalMarketCap) * 100 : 0,
+    }))
+    .sort((a, b) => b.marketCap - a.marketCap);
+
+  const first = companies[0];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-slate-50 sm:text-3xl">Market overview</h1>
+        <p className="mt-1 text-sm text-slate-400">
+          Snapshot of the {companies.length} NGX-listed companies Pulsights tracks.
+        </p>
+        <div className="mt-3">
+          <SourceBadge asOf={first?.asOf} source={first?.source} isPlaceholder={first?.isPlaceholder} />
+        </div>
+      </div>
+
+      <div className="mb-4 rounded-xl border border-slate-800 bg-slate-900/40 p-4 text-sm text-slate-400">
+        <strong className="text-slate-200">Pulsights Tracked-20 Composite</strong> — an equal-weighted average
+        of the {companies.length} companies below, not the official NGX All-Share Index. NGX publishes the ASI
+        across its full list of 150+ listed companies; we don&apos;t have a licensed feed for that figure yet, so
+        we show this instead rather than imply we do.
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatCard
+          label="Tracked-20 composite"
+          value={formatPercent(avgChangePercent)}
+          tone={avgChangePercent > 0 ? "positive" : avgChangePercent < 0 ? "negative" : "neutral"}
+          sub="Equal-weighted avg change"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <StatCard label="Combined market cap" value={formatCompactNaira(totalMarketCap)} sub="Tracked companies" />
+        <StatCard label="Advancing" value={String(advancing)} tone="positive" sub={`of ${withQuotes.length}`} />
+        <StatCard label="Declining" value={String(declining)} tone="negative" sub={`of ${withQuotes.length}`} />
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-sm font-semibold text-slate-200">Top gainers</h2>
+          <MoversTable rows={gainers} />
+        </section>
+        <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-sm font-semibold text-slate-200">Top losers</h2>
+          <MoversTable rows={losers} />
+        </section>
+      </div>
+
+      <section className="mt-8 rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+        <h2 className="mb-3 text-sm font-semibold text-slate-200">Sector breakdown</h2>
+        <div className="space-y-2">
+          {sectorBreakdown.map((s) => (
+            <div key={s.sector} className="flex items-center gap-3 text-sm">
+              <span className="w-40 shrink-0 text-slate-300">{SECTOR_LABELS[s.sector] ?? s.sector}</span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-800">
+                <div className="h-full rounded-full bg-emerald-500" style={{ width: `${s.share}%` }} />
+              </div>
+              <span className="w-14 shrink-0 text-right text-slate-400">{s.share.toFixed(1)}%</span>
+            </div>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </section>
     </div>
+  );
+}
+
+function MoversTable({
+  rows,
+}: {
+  rows: { symbol: string; name: string; price: number | null; changePercent: number | null }[];
+}) {
+  if (rows.length === 0) return <p className="text-sm text-slate-500">No data.</p>;
+  return (
+    <table className="w-full text-sm">
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.symbol} className="border-t border-slate-800 first:border-0">
+            <td className="py-2">
+              <Link href={`/stocks/${r.symbol}`} className="font-medium text-slate-100 hover:text-emerald-400">
+                {r.symbol}
+              </Link>
+              <span className="ml-2 text-xs text-slate-500">{r.name}</span>
+            </td>
+            <td className="py-2 text-right text-slate-300">₦{r.price?.toFixed(2) ?? "—"}</td>
+            <td
+              className={`py-2 pl-4 text-right font-medium ${
+                (r.changePercent ?? 0) > 0
+                  ? "text-emerald-400"
+                  : (r.changePercent ?? 0) < 0
+                    ? "text-rose-400"
+                    : "text-slate-400"
+              }`}
+            >
+              {formatPercent(r.changePercent)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

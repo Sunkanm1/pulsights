@@ -1,0 +1,122 @@
+// Pulsights — NGX-listed company financial data
+// learn more about the schema format: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Sector {
+  BANKING
+  TELECOMMUNICATIONS
+  CONSUMER_GOODS
+  INDUSTRIAL_GOODS
+  OIL_GAS
+  AGRICULTURE
+  CONGLOMERATES
+  HEALTHCARE
+  REAL_ESTATE
+  FINANCIAL_SERVICES
+}
+
+model Company {
+  id          String    @id @default(cuid())
+  symbol      String    @unique
+  name        String
+  sector      Sector
+  description String
+  listingDate DateTime?
+  logoUrl     String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  quotes          Quote[]
+  fundamentals    Fundamentals[]
+  priceHistory    PriceHistory[]
+  dividendHistory DividendHistory[]
+
+  @@index([sector])
+}
+
+// Latest/current quote snapshot for a company. One row per company, overwritten on refresh.
+model Quote {
+  id            String   @id @default(cuid())
+  companyId     String   @unique
+  company       Company  @relation(fields: [companyId], references: [id])
+  price         Float
+  previousClose Float
+  change        Float
+  changePercent Float
+  dayHigh       Float?
+  dayLow        Float?
+  volume        Int?
+  marketCap     Float?
+  asOf          DateTime
+  source        String
+  isPlaceholder Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+}
+
+// Annual (occasionally quarterly) fundamentals. Multiple rows per company, one per period.
+model Fundamentals {
+  id                String   @id @default(cuid())
+  companyId         String
+  company           Company  @relation(fields: [companyId], references: [id])
+  periodLabel       String // e.g. "FY2024", "Q2 2024"
+  periodType        String // "ANNUAL" | "QUARTERLY"
+  fiscalYearEnd     DateTime
+  revenue           Float?
+  profit            Float?
+  operatingCashFlow Float?
+  totalDebt         Float?
+  eps               Float?
+  dividendPerShare  Float?
+  dividendYield     Float?
+  roe               Float?
+  peRatio           Float?
+  pbRatio           Float?
+  sharesOutstanding Float?
+  asOf              DateTime
+  source            String
+  isPlaceholder     Boolean  @default(false)
+
+  @@unique([companyId, periodLabel])
+  @@index([companyId])
+}
+
+model PriceHistory {
+  id            String   @id @default(cuid())
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id])
+  date          DateTime
+  open          Float
+  high          Float
+  low           Float
+  close         Float
+  volume        Int?
+  source        String
+  isPlaceholder Boolean  @default(false)
+
+  @@unique([companyId, date])
+  @@index([companyId, date])
+}
+
+model DividendHistory {
+  id            String    @id @default(cuid())
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  declaredYear  Int
+  type          String // "INTERIM" | "FINAL" | "SPECIAL"
+  amount        Float // Naira per share
+  exDate        DateTime?
+  paymentDate   DateTime?
+  source        String
+  isPlaceholder Boolean   @default(false)
+
+  @@index([companyId, declaredYear])
+}
