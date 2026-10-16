@@ -1,0 +1,7 @@
+# Keep local-only files out of CLI deploys
+.env
+.env.local
+/dev.db
+/dev.db-journal
+/.claude/
+/.agents/
