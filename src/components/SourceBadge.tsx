@@ -10,18 +10,18 @@ export function SourceBadge({
   isPlaceholder?: boolean;
 }) {
   return (
-    <div className="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-500">
+    <div className="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-muted">
       <span>
-        As of <span className="font-medium text-slate-700">{formatDateTime(asOf)}</span>
+        As of <span className="font-medium text-ink">{formatDateTime(asOf)}</span>
       </span>
-      <span className="text-slate-300">·</span>
+      <span className="text-border-strong">·</span>
       <span>
-        Source: <span className="font-medium text-slate-700">{source ?? "unknown"}</span>
+        Source: <span className="font-medium text-ink">{source ?? "unknown"}</span>
       </span>
       {isPlaceholder && (
         <>
-          <span className="text-slate-300">·</span>
-          <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-800">
+          <span className="text-border-strong">·</span>
+          <span className="rounded-full bg-accent/15 px-2 py-0.5 font-semibold text-accent-strong">
             Placeholder data
           </span>
         </>

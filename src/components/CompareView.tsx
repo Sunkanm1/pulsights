@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { X } from "lucide-react";
 import type { CompanySummary } from "@/lib/queries";
 import { formatCompactNaira, formatNaira, formatPercent, formatRatio } from "@/lib/format";
 
@@ -70,16 +71,16 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
         {selectedCompanies.map((c) => (
           <span
             key={c.symbol}
-            className="inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3 py-1.5 text-sm text-white"
+            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-sm font-medium text-accent-ink"
           >
             {c.symbol}
             <button
               type="button"
               onClick={() => removeSymbol(c.symbol)}
-              className="text-slate-400 hover:text-red-400"
+              className="text-accent-ink/70 hover:text-accent-ink"
               aria-label={`Remove ${c.symbol}`}
             >
-              ✕
+              <X className="h-3.5 w-3.5" />
             </button>
           </span>
         ))}
@@ -87,7 +88,7 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
           <select
             value={pickerValue}
             onChange={(e) => addSymbol(e.target.value)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+            className="rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           >
             <option value="">+ Add company…</option>
             {available.map((c) => (
@@ -97,22 +98,24 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
             ))}
           </select>
         )}
-        <span className="text-xs text-slate-500">{selected.length}/{MAX_COMPARE} selected</span>
+        <span className="text-xs text-ink-muted">
+          {selected.length}/{MAX_COMPARE} selected
+        </span>
       </div>
 
       {selectedCompanies.length < 2 ? (
-        <p className="rounded-lg border border-slate-200 bg-white p-6 text-center text-sm text-slate-500 shadow-sm">
+        <p className="rounded-lg border border-border bg-surface p-6 text-center text-sm text-ink-muted">
           Pick at least 2 companies to compare.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full min-w-[560px] text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <tr className="border-b border-border bg-surface-2 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">
                 <th className="px-3 py-2.5">Metric</th>
                 {selectedCompanies.map((c) => (
                   <th key={c.symbol} className="px-3 py-2.5 text-right">
-                    <Link href={`/stocks/${c.symbol}`} className="hover:text-amber-700">
+                    <Link href={`/stocks/${c.symbol}`} className="hover:text-accent">
                       {c.symbol}
                     </Link>
                   </th>
@@ -121,15 +124,15 @@ export function CompareView({ companies }: { companies: CompanySummary[] }) {
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.label} className="border-b border-slate-100 last:border-0">
-                  <td className="px-3 py-2.5 text-slate-500">{row.label}</td>
+                <tr key={row.label} className="border-b border-border last:border-0">
+                  <td className="px-3 py-2.5 text-ink-muted">{row.label}</td>
                   {selectedCompanies.map((c) => {
                     const tone = row.tone?.(c) ?? "neutral";
                     return (
                       <td
                         key={c.symbol}
-                        className={`px-3 py-2.5 text-right font-medium tabular-nums ${
-                          tone === "positive" ? "text-green-700" : tone === "negative" ? "text-red-700" : "text-slate-900"
+                        className={`px-3 py-2.5 text-right font-mono font-medium tabular-nums ${
+                          tone === "positive" ? "text-positive" : tone === "negative" ? "text-negative" : "text-ink"
                         }`}
                       >
                         {row.render(c)}

@@ -172,3 +172,126 @@ export async function getAllSectors(): Promise<string[]> {
   const companies = await db.company.findMany({ select: { sector: true }, distinct: ["sector"] });
   return companies.map((c) => c.sector).sort();
 }
+
+export type ArticleSummary = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  tags: string[];
+  authorName: string;
+  authorRole: string | null;
+  featured: boolean;
+  readMinutes: number;
+  publishedAt: Date;
+  isPlaceholder: boolean;
+  company: { symbol: string; name: string } | null;
+};
+
+export type ArticleDetail = ArticleSummary & { content: string; source: string };
+
+function toArticleSummary(a: {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  tags: string;
+  authorName: string;
+  authorRole: string | null;
+  featured: boolean;
+  readMinutes: number;
+  publishedAt: Date;
+  isPlaceholder: boolean;
+  company: { symbol: string; name: string } | null;
+}): ArticleSummary {
+  return {
+    slug: a.slug,
+    title: a.title,
+    excerpt: a.excerpt,
+    category: a.category,
+    tags: a.tags ? a.tags.split(",").filter(Boolean) : [],
+    authorName: a.authorName,
+    authorRole: a.authorRole,
+    featured: a.featured,
+    readMinutes: a.readMinutes,
+    publishedAt: a.publishedAt,
+    isPlaceholder: a.isPlaceholder,
+    company: a.company,
+  };
+}
+
+const articleListSelect = {
+  slug: true,
+  title: true,
+  excerpt: true,
+  category: true,
+  tags: true,
+  authorName: true,
+  authorRole: true,
+  featured: true,
+  readMinutes: true,
+  publishedAt: true,
+  isPlaceholder: true,
+  company: { select: { symbol: true, name: true } },
+} as const;
+
+export async function getArticles(options?: { category?: string; limit?: number }): Promise<ArticleSummary[]> {
+  const articles = await db.article.findMany({
+    where: options?.category ? { category: options.category as never } : undefined,
+    orderBy: { publishedAt: "desc" },
+    take: options?.limit,
+    select: articleListSelect,
+  });
+  return articles.map(toArticleSummary);
+}
+
+export async function getFeaturedArticles(limit = 3): Promise<ArticleSummary[]> {
+  const articles = await db.article.findMany({
+    where: { featured: true },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+    select: articleListSelect,
+  });
+  return articles.map(toArticleSummary);
+}
+
+export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
+  const a = await db.article.findUnique({
+    where: { slug },
+    select: { ...articleListSelect, content: true, source: true },
+  });
+  if (!a) return null;
+  return { ...toArticleSummary(a), content: a.content, source: a.source };
+}
+
+export async function getArticlesByCompany(companySymbol: string, limit = 3): Promise<ArticleSummary[]> {
+  const articles = await db.article.findMany({
+    where: { company: { symbol: companySymbol } },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+    select: articleListSelect,
+  });
+  return articles.map(toArticleSummary);
+}
+
+export async function getRelatedArticles(slug: string, companySymbol: string | null, limit = 3): Promise<ArticleSummary[]> {
+  const articles = await db.article.findMany({
+    where: {
+      slug: { not: slug },
+      ...(companySymbol ? { company: { symbol: companySymbol } } : {}),
+    },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+    select: articleListSelect,
+  });
+  if (articles.length >= limit || companySymbol) return articles.map(toArticleSummary);
+
+  // Fall back to latest articles overall if there weren't enough on-topic ones.
+  const fallback = await db.article.findMany({
+    where: { slug: { not: slug } },
+    orderBy: { publishedAt: "desc" },
+    take: limit,
+    select: articleListSelect,
+  });
+  return fallback.map(toArticleSummary);
+}

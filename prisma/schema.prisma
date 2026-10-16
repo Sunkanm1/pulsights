@@ -23,6 +23,16 @@ enum Sector {
   FINANCIAL_SERVICES
 }
 
+enum ArticleCategory {
+  MARKET_NEWS
+  EARNINGS
+  DIVIDENDS
+  IPO_LISTINGS
+  ANALYSIS
+  MACRO
+  COMPANY_NEWS
+}
+
 model Company {
   id          String    @id @default(cuid())
   symbol      String    @unique
@@ -39,6 +49,7 @@ model Company {
   fundamentals    Fundamentals[]
   priceHistory    PriceHistory[]
   dividendHistory DividendHistory[]
+  articles        Article[]
 
   @@index([sector])
 }
@@ -119,4 +130,31 @@ model DividendHistory {
   isPlaceholder Boolean   @default(false)
 
   @@index([companyId, declaredYear])
+}
+
+// Editorial/blog content — NGX market news, earnings recaps, analysis. Independent
+// of the Quote/Fundamentals refresh pipeline; written and published separately.
+model Article {
+  id            String          @id @default(cuid())
+  slug          String          @unique
+  title         String
+  excerpt       String
+  content       String // markdown body
+  category      ArticleCategory
+  tags          String // comma-separated
+  authorName    String
+  authorRole    String?
+  featured      Boolean         @default(false)
+  readMinutes   Int             @default(4)
+  companyId     String?
+  company       Company?        @relation(fields: [companyId], references: [id])
+  publishedAt   DateTime
+  source        String
+  isPlaceholder Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([category])
+  @@index([publishedAt])
+  @@index([companyId])
 }

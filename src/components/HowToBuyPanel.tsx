@@ -1,14 +1,15 @@
+import { ArrowUpRight } from "lucide-react";
 import { howToBuyIntro, licensedBrokers, retailApps, type HowToBuyEntry } from "@/data/how-to-buy";
 
 function EntryRow({ entry }: { entry: HowToBuyEntry }) {
   return (
-    <li className="flex items-start justify-between gap-3 border-t border-slate-100 py-3 first:border-0">
+    <li className="flex items-start justify-between gap-3 border-t border-border py-3 first:border-0">
       <div className="min-w-0">
-        <p className="font-medium text-slate-900">{entry.name}</p>
-        <p className="mt-0.5 text-sm text-slate-500">{entry.description}</p>
+        <p className="font-medium text-ink">{entry.name}</p>
+        <p className="mt-0.5 text-sm text-ink-muted">{entry.description}</p>
         <span
           className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-            entry.cscsCompliant === "yes" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
+            entry.cscsCompliant === "yes" ? "bg-positive/15 text-positive" : "bg-accent/15 text-accent-strong"
           }`}
         >
           {entry.cscsCompliant === "yes" ? "CSCS-compliant" : "Confirm coverage for this stock"}
@@ -18,9 +19,10 @@ function EntryRow({ entry }: { entry: HowToBuyEntry }) {
         href={entry.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="shrink-0 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:border-slate-900 hover:text-slate-900"
+        className="inline-flex shrink-0 items-center gap-1 rounded-md border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-ink-muted hover:border-accent hover:text-ink"
       >
-        Visit ↗
+        Visit
+        <ArrowUpRight className="h-3.5 w-3.5" />
       </a>
     </li>
   );
@@ -28,12 +30,12 @@ function EntryRow({ entry }: { entry: HowToBuyEntry }) {
 
 export function HowToBuyPanel({ symbol }: { symbol: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <h2 className="text-sm font-semibold text-slate-900">How to buy {symbol}</h2>
-      <p className="mt-2 text-sm text-slate-500">{howToBuyIntro}</p>
+    <div className="rounded-lg border border-border bg-surface p-4">
+      <h2 className="font-heading text-sm font-semibold text-ink">How to buy {symbol}</h2>
+      <p className="mt-2 text-sm text-ink-muted">{howToBuyIntro}</p>
 
       <div className="mt-4">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
           NGX-licensed stockbroking firms
         </h3>
         <ul>
@@ -44,7 +46,7 @@ export function HowToBuyPanel({ symbol }: { symbol: string }) {
       </div>
 
       <div className="mt-6">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
           Retail investing apps with direct NGX access
         </h3>
         <ul>

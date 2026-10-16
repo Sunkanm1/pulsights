@@ -1,8 +1,17 @@
 "use client";
 
+import { Star } from "lucide-react";
 import { toggleWatchlist, useWatchlist } from "@/lib/watchlist";
 
-export function WatchlistButton({ symbol, className = "" }: { symbol: string; className?: string }) {
+export function WatchlistButton({
+  symbol,
+  size = "sm",
+  className = "",
+}: {
+  symbol: string;
+  size?: "sm" | "lg";
+  className?: string;
+}) {
   const symbols = useWatchlist();
   const active = symbols.includes(symbol);
 
@@ -16,11 +25,11 @@ export function WatchlistButton({ symbol, className = "" }: { symbol: string; cl
       }}
       aria-pressed={active}
       aria-label={active ? `Remove ${symbol} from watchlist` : `Add ${symbol} to watchlist`}
-      className={`rounded-md p-1.5 text-lg leading-none transition ${
-        active ? "text-amber-500 hover:text-amber-600" : "text-slate-300 hover:text-slate-500"
+      className={`flex items-center justify-center rounded-md p-1.5 transition ${
+        active ? "text-accent" : "text-ink-muted hover:text-accent-strong"
       } ${className}`}
     >
-      {active ? "★" : "☆"}
+      <Star className={size === "lg" ? "h-6 w-6" : "h-4 w-4"} fill={active ? "currentColor" : "none"} strokeWidth={2} />
     </button>
   );
 }

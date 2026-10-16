@@ -55,6 +55,28 @@ export function formatDateTime(date: Date | string | null | undefined): string {
   });
 }
 
+export function formatRelativeDate(date: Date | string | null | undefined): string {
+  if (!date) return "—";
+  const d = typeof date === "string" ? new Date(date) : date;
+  const diffMs = Date.now() - d.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays <= 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  return formatDate(d);
+}
+
+export const ARTICLE_CATEGORY_LABELS: Record<string, string> = {
+  MARKET_NEWS: "Market News",
+  EARNINGS: "Earnings",
+  DIVIDENDS: "Dividends",
+  IPO_LISTINGS: "IPOs & Listings",
+  ANALYSIS: "Analysis",
+  MACRO: "Macro",
+  COMPANY_NEWS: "Company News",
+};
+
 export const SECTOR_LABELS: Record<string, string> = {
   BANKING: "Banking",
   TELECOMMUNICATIONS: "Telecommunications",

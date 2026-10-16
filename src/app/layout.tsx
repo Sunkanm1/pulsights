@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Space_Grotesk, DM_Sans, IBM_Plex_Mono } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { DisclaimerFooter } from "@/components/DisclaimerFooter";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-plex-sans",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -17,15 +23,18 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pulsights — NGX Company Financials",
+  title: "Pulsights — NGX News & Company Financials",
   description:
-    "Revenue, profit, cash flow, debt, EPS, dividends, ROE and valuation for Nigerian Exchange (NGX) listed companies.",
+    "NGX market news, earnings commentary and analysis, plus revenue, profit, cash flow, debt, EPS, dividends, ROE and valuation for Nigerian Exchange listed companies.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${plexSans.variable} ${plexMono.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-slate-50 text-slate-900">
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${dmSans.variable} ${plexMono.variable} h-full antialiased`}
+    >
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <Navbar />
         <main className="flex-1">{children}</main>
         <DisclaimerFooter />

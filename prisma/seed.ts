@@ -8,6 +8,7 @@
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { seedCompanies, type SeedCompany } from "./seed-companies";
+import { seedArticles, type SeedArticle } from "./seed-articles";
 
 const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL ?? "file:./dev.db",
@@ -229,11 +230,60 @@ async function seedCompany(c: SeedCompany) {
   return company.symbol;
 }
 
+async function seedArticle(a: SeedArticle) {
+  const company = a.companySymbol
+    ? await db.company.findUnique({ where: { symbol: a.companySymbol } })
+    : null;
+  const publishedAt = new Date(SEED_AS_OF);
+  publishedAt.setDate(publishedAt.getDate() - a.daysAgo);
+
+  await db.article.upsert({
+    where: { slug: a.slug },
+    create: {
+      slug: a.slug,
+      title: a.title,
+      excerpt: a.excerpt,
+      content: a.content,
+      category: a.category,
+      tags: a.tags.join(","),
+      authorName: a.authorName,
+      authorRole: a.authorRole,
+      featured: a.featured ?? false,
+      readMinutes: a.readMinutes,
+      companyId: company?.id,
+      publishedAt,
+      source: "Editorial desk (placeholder)",
+      isPlaceholder: true,
+    },
+    update: {
+      title: a.title,
+      excerpt: a.excerpt,
+      content: a.content,
+      category: a.category,
+      tags: a.tags.join(","),
+      authorName: a.authorName,
+      authorRole: a.authorRole,
+      featured: a.featured ?? false,
+      readMinutes: a.readMinutes,
+      companyId: company?.id,
+      publishedAt,
+      source: "Editorial desk (placeholder)",
+      isPlaceholder: true,
+    },
+  });
+  return a.slug;
+}
+
 async function main() {
   console.log(`Seeding ${seedCompanies.length} companies (placeholder data)...`);
   for (const c of seedCompanies) {
     const symbol = await seedCompany(c);
     console.log(`  seeded ${symbol}`);
+  }
+  console.log(`Seeding ${seedArticles.length} articles (placeholder editorial content)...`);
+  for (const a of seedArticles) {
+    const slug = await seedArticle(a);
+    console.log(`  seeded ${slug}`);
   }
   console.log("Done.");
 }

@@ -10,16 +10,16 @@ export function StatCard({
   tone?: "neutral" | "positive" | "negative";
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
+    <div className="rounded-lg border border-border bg-surface p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">{label}</p>
       <p
-        className={`mt-1.5 text-xl font-semibold tabular-nums ${
-          tone === "positive" ? "text-green-700" : tone === "negative" ? "text-red-700" : "text-slate-900"
+        className={`mt-1.5 font-mono text-xl font-semibold tabular-nums ${
+          tone === "positive" ? "text-positive" : tone === "negative" ? "text-negative" : "text-ink"
         }`}
       >
         {value}
       </p>
-      {sub && <p className="mt-1 text-xs text-slate-500">{sub}</p>}
+      {sub && <p className="mt-1 text-xs text-ink-muted">{sub}</p>}
     </div>
   );
 }

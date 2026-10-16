@@ -46,3 +46,7 @@ next-env.d.ts
 # sqlite dev db
 /dev.db
 /dev.db-journal
+
+# local agent tooling
+/.claude/
+/.agents/
