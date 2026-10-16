@@ -11,7 +11,8 @@ import type { VercelConfig } from "@vercel/config/v1";
 export const config: VercelConfig = {
   framework: "nextjs",
   crons: [
-    { path: "/api/cron/refresh-prices", schedule: "*/15 9-13 * * 1-5" },
+    // Hobby plan allows daily crons only; on Pro use "*/15 9-13 * * 1-5".
+    { path: "/api/cron/refresh-prices", schedule: "0 13 * * 1-5" },
     { path: "/api/cron/refresh-fundamentals", schedule: "0 5 * * 1" },
   ],
 };
